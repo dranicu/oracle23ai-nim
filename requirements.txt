@@ -1,0 +1,9 @@
+oracledb
+langchain
+langchain-community
+langchain-core
+cohere
+openai
+gradio
+oci
+langchain_openai
