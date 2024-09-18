@@ -41,7 +41,7 @@ def load_model(session_id, embedding_model, embedding_api_key, llm_model, llm_ap
             'top_p': top_p
         }
     )
-    collection_name = embedding_model
+    collection_name = ''.join([i for i in embedding_model if not i.isdigit()]).replace("-","")
     # Setting up connection to oracle 23ai
     adb_pwd, dns, dbwallet_dir, dbwallet_dir, atp_wallet_pwd = db_connection()
     adb_user = "vectoruser"
@@ -139,7 +139,7 @@ def upload_and_create_vector_store(file, embedding_model, embedding_api_key, ses
 
     embedding = embedding_function(api_key=embedding_api_key)
     
-    collection_name = embedding_model
+    collection_name = ''.join([i for i in embedding_model if not i.isdigit()]).replace("-","")
     index_success_msg = create_vector_store_index(collection_name, permanent_file_path, embedding)
     
     return index_success_msg
