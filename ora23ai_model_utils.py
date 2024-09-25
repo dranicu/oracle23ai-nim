@@ -9,6 +9,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_community.chat_message_histories import ChatMessageHistory
 
+
 # Global environment variables used to store state based on session_id
 store = {}
 conversation_rag_chain = {}
@@ -67,7 +68,6 @@ def load_model(session_id, embedding_model, embedding_api_key, llm_model, llm_ap
     which can be understood without the chat history. If the question is not related to the chat history, \
     leave the question intact. Do NOT answer the question, \
     just reformulate it if needed and otherwise return it as is."""
-    
     qa_prompt = ChatPromptTemplate.from_messages(
         [
             ("system", instruction),
@@ -80,9 +80,10 @@ def load_model(session_id, embedding_model, embedding_api_key, llm_model, llm_ap
         [
             ("system", contextualize_q_system_prompt),
             MessagesPlaceholder("chat_history"),
-            ("human", "{input}"),
+            ("human", "User question: {input}"),
         ]
     )
+
     
     history_aware_retriever = create_history_aware_retriever(
         llm, retriever, contextualize_q_prompt
@@ -94,7 +95,6 @@ def load_model(session_id, embedding_model, embedding_api_key, llm_model, llm_ap
 		            input_variables=["page_content", "source"], 
 		            template="Context:\n{page_content}\nSource:{source}"
 		        )
-    
     question_answer_chain = create_stuff_documents_chain(llm, qa_prompt, document_prompt=document_prompt)#, output_parser=CustomOutputParser())
     
     rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
@@ -107,6 +107,7 @@ def load_model(session_id, embedding_model, embedding_api_key, llm_model, llm_ap
         history_messages_key="chat_history",
         output_messages_key="answer"
     )
+
     
     if conversation_rag_chain.get(session_id, None) is None:
         return f"Failed to load the model {llm_model}"
